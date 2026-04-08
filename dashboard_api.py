@@ -262,9 +262,9 @@ def get_config():
 
 
 @app.post("/reset")
-def reset_simulation(controls: DashboardControls):
+def reset_simulation(controls: Optional[DashboardControls] = None):
     global SESSION
-    SESSION = _make_runtime(controls)
+    SESSION = _make_runtime(controls or DashboardControls())
     return _snapshot(SESSION)
 
 
