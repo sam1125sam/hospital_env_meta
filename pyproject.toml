@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hospital-er-openenv"
+version = "1.0.0"
+description = "OpenEnv-compatible hospital ER triage environment with ethical modes, uncertainty, and multi-agent coordination."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "pydantic>=2.0.0",
+  "pyyaml>=6.0",
+  "openai>=1.0.0",
+  "fastapi>=0.115.0",
+  "uvicorn>=0.32.0",
+]
+
+[tool.setuptools]
+py-modules = [
+  "baseline",
+  "comparison_utils",
+  "dashboard_api",
+  "dynamics",
+  "env",
+  "ethical_comparison",
+  "event_demo",
+  "events",
+  "grader",
+  "inference",
+  "models",
+  "multi_agent",
+  "reward",
+  "uncertainty",
+]
