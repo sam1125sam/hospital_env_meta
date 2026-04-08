@@ -1,3 +1,12 @@
+---
+title: Hospital ER Triage OpenEnv
+emoji: 🏥
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+app_port: 7860
+---
+
 # AI Decision-Making in Emergency Healthcare under Uncertainty
 
 A research-grade OpenEnv-compatible reinforcement learning environment for emergency-room triage, scarce-resource allocation, and ethical decision-making under uncertainty.

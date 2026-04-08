@@ -59,6 +59,16 @@ app.add_middleware(
 SESSION = DashboardSession()
 
 
+@app.get("/")
+def root():
+    return {
+        "name": "hospital-er-triage",
+        "status": "ok",
+        "message": "Hospital ER dashboard API is running.",
+        "routes": ["/config", "/reset", "/step", "/state", "/metrics", "/compare"],
+    }
+
+
 def _task_env(controls: DashboardControls):
     task_key = controls.difficulty if controls.difficulty in TASK_REGISTRY else "medium"
     env = TASK_REGISTRY[task_key]["factory"]()
