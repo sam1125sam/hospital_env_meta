@@ -215,6 +215,12 @@ docker build -t hospital-er-env .
 docker run hospital-er-env
 ```
 
+This now starts the OpenEnv-compatible FastAPI server from [`server/app.py`](/Users/samsam/meta_hackathon/hospital_env%202/server/app.py), exposing:
+
+- `POST /reset`
+- `POST /step`
+- `GET /state`
+
 ## Robustness and Invariants
 
 Every step validates that:

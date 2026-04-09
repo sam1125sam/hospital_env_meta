@@ -33,6 +33,16 @@ def _get_env() -> HospitalEREnv:
     return ENV
 
 
+@app.get("/")
+def root() -> Dict[str, Any]:
+    return {
+        "name": "hospital-er-triage",
+        "status": "ok",
+        "message": "OpenEnv-compatible Hospital ER server is running.",
+        "routes": ["/reset", "/step", "/state"],
+    }
+
+
 @app.post("/reset")
 def reset() -> Dict[str, Any]:
     env = _get_env()

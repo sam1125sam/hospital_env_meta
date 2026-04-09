@@ -18,4 +18,4 @@ ENV PYTHONPATH=/app
 EXPOSE 7860
 
 # Hugging Face Spaces expects a long-running web server bound to 0.0.0.0:7860.
-CMD ["python", "-m", "uvicorn", "dashboard_api:app", "--host", "0.0.0.0", "--port", "7860"]
+CMD ["python", "-m", "uvicorn", "server.app:app", "--host", "0.0.0.0", "--port", "7860"]
