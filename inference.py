@@ -25,18 +25,18 @@ from tasks import TASK_REGISTRY
 # Required submission environment variables:
 # - API_BASE_URL
 # - MODEL_NAME
-# - HF_TOKEN
+# - API_KEY
 # Optional:
+# - HF_TOKEN
 # - LOCAL_IMAGE_NAME when using from_docker_image()
 HF_TOKEN = os.getenv("HF_TOKEN")
 LOCAL_IMAGE_NAME = os.getenv("LOCAL_IMAGE_NAME")
-API_KEY = HF_TOKEN or os.getenv("API_KEY") or os.getenv("OPENAI_API_KEY") or "missing"
+API_KEY = os.getenv("API_KEY") or HF_TOKEN or os.getenv("OPENAI_API_KEY") or "missing"
 API_BASE_URL = os.getenv("API_BASE_URL") or "https://router.huggingface.co/v1"
 MODEL_NAME = os.getenv("MODEL_NAME") or "Qwen/Qwen2.5-72B-Instruct"
 TASK_NAME = os.getenv("HOSPITAL_ER_TASK") or os.getenv("TASK_NAME") or "easy"
 BENCHMARK = os.getenv("HOSPITAL_ER_BENCHMARK") or "hospital-er-triage"
 MAX_STEPS_OVERRIDE = os.getenv("MAX_STEPS")
-USE_LLM = os.getenv("USE_LLM") == "1"
 TEMPERATURE = float(os.getenv("TEMPERATURE", "0.1"))
 MAX_TOKENS = int(os.getenv("MAX_TOKENS", "120"))
 SUCCESS_SCORE_THRESHOLD = float(os.getenv("SUCCESS_SCORE_THRESHOLD", "0.1"))
@@ -137,7 +137,9 @@ def format_observation(obs: Observation) -> str:
 
 
 def llm_action(client: OpenAI, obs: Observation) -> Optional[Action]:
-    if not USE_LLM or API_KEY == "missing":
+    # In validator runs, API_BASE_URL and API_KEY are injected and should be used
+    # automatically so calls go through the provided LiteLLM proxy.
+    if API_KEY == "missing":
         return None
 
     try:
