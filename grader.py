@@ -620,9 +620,8 @@ GRADERS = {
 
 
 def grade_episode(
-    summary_or_task: EpisodeSummary | str,
-    summary: EpisodeSummary | None = None,
-    task_name: str | None = None,
+    summary: EpisodeSummary | str,
+    task_name: EpisodeSummary | str | None = None,
 ) -> GradeResult:
     """
     Grade an episode summary for the given task.
@@ -631,12 +630,12 @@ def grade_episode(
       - grade_episode(summary, task_name="easy")   # OpenEnv validator style
       - grade_episode("easy", summary)             # existing local call sites
     """
-    if isinstance(summary_or_task, str):
-        resolved_task = task_name or summary_or_task
-        resolved_summary = summary
+    if isinstance(summary, str):
+        resolved_task = summary
+        resolved_summary = task_name if isinstance(task_name, EpisodeSummary) else None
     else:
-        resolved_summary = summary_or_task
-        resolved_task = task_name or _infer_task_name(resolved_summary)
+        resolved_summary = summary
+        resolved_task = task_name if isinstance(task_name, str) else _infer_task_name(resolved_summary)
 
     if resolved_summary is None:
         raise ValueError("EpisodeSummary is required for grading.")
