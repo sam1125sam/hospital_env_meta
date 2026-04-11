@@ -619,26 +619,34 @@ GRADERS = {
 }
 
 
-def grade_episode(task_name: str, summary: EpisodeSummary) -> GradeResult:
+def grade_episode(
+    summary_or_task: EpisodeSummary | str,
+    summary: EpisodeSummary | None = None,
+    task_name: str | None = None,
+) -> GradeResult:
     """
     Grade an episode summary for the given task.
 
-    Args:
-        task_name: One of "easy", "medium", "hard", "advanced_fog", "advanced_fairness".
-        summary:   EpisodeSummary from env.get_episode_summary().
-
-    Returns:
-        GradeResult with total_score in [0.0, 1.0] and full sub-metric breakdown.
-
-    Raises:
-        ValueError: If task_name is not recognized.
+    Supports both call styles:
+      - grade_episode(summary, task_name="easy")   # OpenEnv validator style
+      - grade_episode("easy", summary)             # existing local call sites
     """
-    if task_name not in GRADERS:
+    if isinstance(summary_or_task, str):
+        resolved_task = task_name or summary_or_task
+        resolved_summary = summary
+    else:
+        resolved_task = task_name or "easy"
+        resolved_summary = summary_or_task
+
+    if resolved_summary is None:
+        raise ValueError("EpisodeSummary is required for grading.")
+
+    if resolved_task not in GRADERS:
         raise ValueError(
-            f"Unknown task '{task_name}'. "
+            f"Unknown task '{resolved_task}'. "
             f"Valid tasks: {sorted(GRADERS.keys())}"
         )
-    return GRADERS[task_name].grade(summary)
+    return GRADERS[resolved_task].grade(resolved_summary)
 
 
 def evaluation_summary(task_name: str, result: GradeResult) -> Dict[str, object]:
