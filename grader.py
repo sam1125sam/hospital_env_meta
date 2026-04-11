@@ -635,8 +635,8 @@ def grade_episode(
         resolved_task = task_name or summary_or_task
         resolved_summary = summary
     else:
-        resolved_task = task_name or "easy"
         resolved_summary = summary_or_task
+        resolved_task = task_name or _infer_task_name(resolved_summary)
 
     if resolved_summary is None:
         raise ValueError("EpisodeSummary is required for grading.")
@@ -647,6 +647,23 @@ def grade_episode(
             f"Valid tasks: {sorted(GRADERS.keys())}"
         )
     return GRADERS[resolved_task].grade(resolved_summary)
+
+
+def _infer_task_name(summary: EpisodeSummary) -> str:
+    """
+    Best-effort fallback when a validator calls grade_episode(summary) without
+    task metadata. This preserves compatibility with stricter validators while
+    keeping local call sites explicit.
+    """
+    if summary.steps_taken >= 90:
+        return "advanced_fairness"
+    if summary.steps_taken >= 70:
+        return "hard"
+    if summary.steps_taken >= 58:
+        return "advanced_fog"
+    if summary.steps_taken >= 45:
+        return "medium"
+    return "easy"
 
 
 def evaluation_summary(task_name: str, result: GradeResult) -> Dict[str, object]:
