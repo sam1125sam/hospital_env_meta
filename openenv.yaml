@@ -28,8 +28,7 @@ tasks:
       severity-5 general. Tests condition-type awareness, not just severity sorting.
     module: tasks.easy
     factory: make_env
-    grader: grader.grade_episode
-    grader_args: {task_name: "easy"}
+    grader: grader:EasyGrader
     pass_score: 0.62
     max_steps: 35
     seed: 101
@@ -47,8 +46,7 @@ tasks:
       Tests multi-constraint allocation, opportunity cost, and discharge timing.
     module: tasks.medium
     factory: make_env
-    grader: grader.grade_episode
-    grader_args: {task_name: "medium"}
+    grader: grader:MediumGrader
     pass_score: 0.50
     max_steps: 55
     seed: 201
@@ -67,8 +65,7 @@ tasks:
       rate=1.2 for 80 steps. MCI ethical triage protocol required.
     module: tasks.hard
     factory: make_env
-    grader: grader.grade_episode
-    grader_args: {task_name: "hard"}
+    grader: grader:HardGrader
     pass_score: 0.42
     max_steps: 80
     seed: 301
@@ -89,8 +86,7 @@ tasks:
       directly measured as a graded sub-metric.
     module: tasks.advanced_fog
     factory: make_env
-    grader: grader.grade_episode
-    grader_args: {task_name: "advanced_fog"}
+    grader: grader:FogGrader
     pass_score: 0.45
     max_steps: 60
     seed: 401
@@ -112,8 +108,7 @@ tasks:
       triage criterion alongside clinical severity.
     module: tasks.advanced_fairness
     factory: make_env
-    grader: grader.grade_episode
-    grader_args: {task_name: "advanced_fairness"}
+    grader: grader:FairnessGrader
     pass_score: 0.48
     max_steps: 100
     seed: 501

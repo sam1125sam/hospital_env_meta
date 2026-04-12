@@ -136,7 +136,14 @@ class EasyGrader(BaseGrader):
     """
     PASS_THRESHOLD = 0.62
 
-    def grade(self, s: EpisodeSummary) -> GradeResult:
+    def grade(self, env_or_summary, *args, **kwargs) -> GradeResult:
+        from models import EpisodeSummary
+
+        s = (
+            env_or_summary
+            if isinstance(env_or_summary, EpisodeSummary)
+            else env_or_summary.get_episode_summary()
+        )
         sr = self._survival_rate(s)
         csr = self._critical_survival(s)
         eff = self._efficiency_score(s)
@@ -227,7 +234,14 @@ class MediumGrader(BaseGrader):
     """
     PASS_THRESHOLD = 0.50
 
-    def grade(self, s: EpisodeSummary) -> GradeResult:
+    def grade(self, env_or_summary, *args, **kwargs) -> GradeResult:
+        from models import EpisodeSummary
+
+        s = (
+            env_or_summary
+            if isinstance(env_or_summary, EpisodeSummary)
+            else env_or_summary.get_episode_summary()
+        )
         sr = self._survival_rate(s)
         csr = self._critical_survival(s)
         eff = self._efficiency_score(s)
@@ -318,7 +332,14 @@ class HardGrader(BaseGrader):
     """
     PASS_THRESHOLD = 0.42
 
-    def grade(self, s: EpisodeSummary) -> GradeResult:
+    def grade(self, env_or_summary, *args, **kwargs) -> GradeResult:
+        from models import EpisodeSummary
+
+        s = (
+            env_or_summary
+            if isinstance(env_or_summary, EpisodeSummary)
+            else env_or_summary.get_episode_summary()
+        )
         sr = self._survival_rate(s)
         csr = self._critical_survival(s)
         eff = self._efficiency_score(s)
@@ -418,7 +439,14 @@ class FogGrader(BaseGrader):
     """
     PASS_THRESHOLD = 0.45
 
-    def grade(self, s: EpisodeSummary) -> GradeResult:
+    def grade(self, env_or_summary, *args, **kwargs) -> GradeResult:
+        from models import EpisodeSummary
+
+        s = (
+            env_or_summary
+            if isinstance(env_or_summary, EpisodeSummary)
+            else env_or_summary.get_episode_summary()
+        )
         sr = self._survival_rate(s)
         csr = self._critical_survival(s)
         eff = self._efficiency_score(s)
@@ -520,7 +548,14 @@ class FairnessGrader(BaseGrader):
     """
     PASS_THRESHOLD = 0.48
 
-    def grade(self, s: EpisodeSummary) -> GradeResult:
+    def grade(self, env_or_summary, *args, **kwargs) -> GradeResult:
+        from models import EpisodeSummary
+
+        s = (
+            env_or_summary
+            if isinstance(env_or_summary, EpisodeSummary)
+            else env_or_summary.get_episode_summary()
+        )
         sr = self._survival_rate(s)
         csr = self._critical_survival(s)
         eff = self._efficiency_score(s)
