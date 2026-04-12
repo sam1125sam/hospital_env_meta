@@ -29,6 +29,7 @@ tasks:
     module: tasks.easy
     factory: make_env
     grader: grader.grade_episode
+    grader_args: {task_name: "easy"}
     pass_score: 0.62
     max_steps: 35
     seed: 101
@@ -47,6 +48,7 @@ tasks:
     module: tasks.medium
     factory: make_env
     grader: grader.grade_episode
+    grader_args: {task_name: "medium"}
     pass_score: 0.50
     max_steps: 55
     seed: 201
@@ -66,6 +68,7 @@ tasks:
     module: tasks.hard
     factory: make_env
     grader: grader.grade_episode
+    grader_args: {task_name: "hard"}
     pass_score: 0.42
     max_steps: 80
     seed: 301
@@ -87,6 +90,7 @@ tasks:
     module: tasks.advanced_fog
     factory: make_env
     grader: grader.grade_episode
+    grader_args: {task_name: "advanced_fog"}
     pass_score: 0.45
     max_steps: 60
     seed: 401
@@ -109,6 +113,7 @@ tasks:
     module: tasks.advanced_fairness
     factory: make_env
     grader: grader.grade_episode
+    grader_args: {task_name: "advanced_fairness"}
     pass_score: 0.48
     max_steps: 100
     seed: 501
