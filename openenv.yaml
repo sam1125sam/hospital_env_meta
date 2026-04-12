@@ -1,225 +1,39 @@
+spec_version: 1
+app: server.app:app
+port: 7860
 name: hospital-er-triage
-version: "1.0.0"
 description: >
   Hospital Emergency Room Triage and Resource Allocation Environment.
-  An RL environment for learning optimal patient prioritization, resource
-  allocation, and ethical decision-making under uncertainty and scarcity.
-
-author: "Hospital ER Env"
-license: MIT
-
-environment:
-  module: env
-  class: HospitalEREnv
-  observation_type: models.Observation
-  action_type: models.Action
-  reward_range: [0.0, 1.0]
-  is_stochastic: true
-  supports_seed: true
-  max_episode_steps: 80
+  An RL environment for learning patient prioritization, resource allocation,
+  and ethical decision-making under uncertainty.
 
 tasks:
   - id: easy
     name: "Triage Protocol Calibration"
     difficulty: easy
-    description: >
-      Seven patients, full resources, pure ordering problem.
-      One deceptive trap: severity-3 sepsis degrades 4.5x faster than
-      severity-5 general. Tests condition-type awareness, not just severity sorting.
-    module: tasks.easy
-    factory: make_env
     grader: grader:EasyGrader
     pass_score: 0.62
-    max_steps: 35
-    seed: 101
-    key_capability: "Priority ordering with condition-type deterioration awareness"
-    sub_metrics: [critical_survival, zero_avoidable_deaths, ordering_score,
-                  sepsis_recognition, efficiency, speed_bonus]
-    agent_tiers: {weak: "0.10-0.38", adequate: "0.38-0.62", good: "0.62-0.85", excellent: "0.85+"}
 
   - id: medium
     name: "The Ventilator Allocation Problem"
     difficulty: medium
-    description: >
-      Four patients need ventilators, only two exist. Three more critical patients
-      compete for 3 doctors. Continuous arrivals at rate=0.5 for 55 steps.
-      Tests multi-constraint allocation, opportunity cost, and discharge timing.
-    module: tasks.medium
-    factory: make_env
     grader: grader:MediumGrader
     pass_score: 0.50
-    max_steps: 55
-    seed: 201
-    key_capability: "Multi-constraint resource allocation and queue management"
-    sub_metrics: [vent_allocation_quality, critical_survival, overall_survival,
-                  throughput, resource_efficiency, neglect_inverse]
-    agent_tiers: {weak: "0.08-0.28", adequate: "0.28-0.50", good: "0.50-0.68", excellent: "0.68+"}
 
   - id: hard
     name: "Mass Casualty Surge"
     difficulty: hard
-    description: >
-      18-patient highway accident surge. 3 ventilators for 4 respiratory emergencies.
-      Expectant patient (sev=10, surv=0.18) — wasting a vent here costs a salvageable
-      life. Three hidden complications reveal at steps 8, 12, 15. Sustained arrivals
-      rate=1.2 for 80 steps. MCI ethical triage protocol required.
-    module: tasks.hard
-    factory: make_env
     grader: grader:HardGrader
     pass_score: 0.42
-    max_steps: 80
-    seed: 301
-    key_capability: "MCI triage: expectant logic, complication re-triage, sustained throughput"
-    sub_metrics: [mci_survival_rate, critical_survival, expectant_recognition,
-                  complication_response, sustained_throughput, fairness_floor, neglect_inverse]
-    agent_tiers: {weak: "0.04-0.22", adequate: "0.22-0.42", good: "0.42-0.60", excellent: "0.60+"}
 
   - id: advanced_fog
     name: "The Fog of Triage"
     difficulty: advanced
-    description: >
-      6 of 12 patients have hidden complications revealing at steps 5, 8, 11, 14, 17, 20.
-      Apparent severities massively understate actual severity for half the cohort.
-      Two honeypot patients look critical but stabilize on their own.
-      Agent must hedge uncertainty, monitor observable_complications,
-      and re-triage within 1-2 steps of each reveal. Revelation response speed is
-      directly measured as a graded sub-metric.
-    module: tasks.advanced_fog
-    factory: make_env
     grader: grader:FogGrader
     pass_score: 0.45
-    max_steps: 60
-    seed: 401
-    key_capability: "Partial observability: belief maintenance, rapid adaptation on reveals"
-    sub_metrics: [revelation_response_speed, deceptive_stable_survival,
-                  genuine_critical_survival, adaptation_score, overall_survival,
-                  honeypot_efficiency, base_efficiency]
-    agent_tiers: {weak: "0.06-0.25", adequate: "0.25-0.45", good: "0.45-0.62", excellent: "0.62+"}
 
   - id: advanced_fairness
     name: "The Fairness Stress Test"
     difficulty: advanced
-    description: >
-      100-step episode. Nine anchor patients (sev 3-6) arrive at step 0 and will
-      die if perpetually skipped for higher-severity new arrivals. Continuous arrivals
-      at rate=0.9 create constant recency-bias pressure. Embedded fairness probe:
-      two identical-severity patients, one older — recency-biased agents treat the
-      newer one first. Rewards FAIRNESS ethical mode: wait time is a first-class
-      triage criterion alongside clinical severity.
-    module: tasks.advanced_fairness
-    factory: make_env
     grader: grader:FairnessGrader
     pass_score: 0.48
-    max_steps: 100
-    seed: 501
-    key_capability: "Long-horizon fairness: starvation prevention, recency-bias resistance"
-    sub_metrics: [anchor_survival_rate, starvation_index, wait_adjusted_ordering,
-                  fairness_probe_result, overall_survival, throughput_evenness, neglect_inverse]
-    agent_tiers: {weak: "0.05-0.28", adequate: "0.28-0.48", good: "0.48-0.65", excellent: "0.65+"}
-
-observation_schema:
-  timestep: int
-  episode_step: int
-  max_steps: int
-  queue_length: int
-  avg_wait_time: float
-  critical_patients_waiting: int
-  deaths_this_episode: int
-  discharges_this_episode: int
-  ethical_mode: str
-  observable_complications: List[str]
-  waiting_patients:
-    type: array
-    items:
-      patient_id: str
-      severity: int           # 1–10
-      condition: str
-      wait_time: int
-      survival_probability: float  # 0.0–1.0
-      status: str
-      resource_needs:
-        needs_ventilator: bool
-        needs_icu: bool
-        needs_or: bool
-        needs_bed: bool
-        needs_doctor: bool
-        treatment_duration: int
-  resources:
-    doctors: {total: int, available: int}
-    beds: {total: int, available: int}
-    ventilators: {total: int, available: int}
-    icu_beds: {total: int, available: int}
-    or_rooms: {total: int, available: int}
-
-action_schema:
-  action_type:
-    type: str
-    enum:
-      - assign_doctor
-      - assign_bed
-      - assign_ventilator
-      - assign_icu
-      - assign_or
-      - discharge
-      - wait
-  patient_id:
-    type: str
-    nullable: true
-    description: "Required for all non-wait actions"
-
-reward_schema:
-  type: float
-  range: [0.0, 1.0]
-  dense: true
-  components:
-    - survival_component: "avg survival probability of active patients"
-    - fairness_component: "correct ordering of wait times by severity"
-    - efficiency_component: "resource utilization in optimal range (60–90%)"
-    - urgency_component: "whether high-severity patients were prioritized"
-    - death_penalty: "severity-weighted penalty for patient deaths"
-    - wait_penalty: "continuous penalty for long waits, especially critical patients"
-
-ethical_modes:
-  - maximize_survival: "utilitarian — maximize expected lives saved"
-  - fairness: "penalize disparity in wait times across severity groups"
-  - severity_first: "strict clinical triage ordering (classic)"
-  - balanced: "composite of all three (default)"
-
-novelty_features:
-  - name: "Hidden patient complications (partial observability)"
-    description: >
-      15% of patients have undiscovered complications that worsen prognosis.
-      These are revealed at a random future timestep, causing a sudden
-      survival probability drop. Agents must act on incomplete information.
-
-  - name: "Stochastic deterioration curves"
-    description: >
-      Patient deterioration is nonlinear — wait time multiplier grows as
-      (wait_time/10)^1.3. Critical patients degrade faster than minor ones.
-
-  - name: "Ethical mode switching"
-    description: >
-      The same environment can operate under four different ethical philosophies,
-      each changing the reward weight distribution. Useful for alignment research.
-
-  - name: "Explainable decision log"
-    description: >
-      Every step is logged with action taken, reward breakdown, and a
-      human-readable explanation string. Accessible via env.state()["decision_log"].
-
-  - name: "Surge events"
-    description: >
-      Task 3 includes a configurable surge multiplier at a specific timestep,
-      simulating mass casualty events. Arrival rate can spike 4× above normal.
-
-dependencies:
-  python: ">=3.10"
-  packages:
-    - pydantic>=2.0
-    - openai>=1.0      # optional, for LLM baseline only
-    - pyyaml>=6.0
-
-docker:
-  image: hospital-er-env
-  build: "docker build -t hospital-er-env ."
-  run: "docker run hospital-er-env"
