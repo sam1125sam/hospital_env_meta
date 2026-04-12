@@ -21,7 +21,7 @@ dependencies = [
 server = "server.app:main"
 
 [tool.setuptools]
-packages = ["server"]
+packages = ["server", "tasks"]
 py-modules = [
   "baseline",
   "comparison_utils",
